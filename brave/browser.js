@@ -7,7 +7,7 @@ const puppeteerLib = require('puppeteer-core')
 const braveConstantsLib = require('./constants')
 
 const launch = async args => {
-  const userDataDir = pathLib.join(args.tmp, braveConstantsLib.profileDirName)
+  const userDataDir = pathLib.join(args.temp, braveConstantsLib.profileDirName)
   const launchArgs = {
     defaultViewport: {
       deviceScaleFactor: 1,
