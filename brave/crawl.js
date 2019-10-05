@@ -1,5 +1,7 @@
 'use strict'
 
+const childProcLib = require('child_process')
+
 const puppeteerLib = require('puppeteer-core')
 
 const braveBrowserLib = require('./browser')
@@ -15,15 +17,17 @@ const loadFor = async (page, url, numSecs = 30) => {
   } catch (e) {
     if ((e instanceof puppeteerLib.errors.TimeoutError) === false) {
       console.error(`Error doing top level fetch: ${e.toString()}`)
-      return
+      throw e
     }
   }
   const endTime = Date.now()
   const timeElapsed = endTime - startTime
 
   if (timeElapsed < waitTime) {
-    const additionalWaitTime = waitTime - timeElapsed
-    await page.waitFor(additionalWaitTime)
+    const additionalWaitTime = Math.floor((waitTime - timeElapsed) / 1000)
+    if (additionalWaitTime > 0) {
+      childProcLib.execSync(`sleep ${additionalWaitTime}`)
+    }
   }
 }
 
@@ -32,13 +36,21 @@ const crawl = async args => {
   await report.installCleanProfile()
 
   const landingPageUrl = `https://${args.domain}`
+  let childUrlsResult
   const browser = await braveBrowserLib.launch(args)
-  const page = await browser.newPage()
-  await loadFor(page, landingPageUrl, args.secs)
+  try {
+    const page = await browser.newPage()
+    await loadFor(page, landingPageUrl, args.secs)
 
-  const childUrlsResult = braveChildUrlsLib.select(page, args.children)
-  if (childUrlsResult.urlsFromFeed === true) {
-    report.setHasFeed()
+    childUrlsResult = await braveChildUrlsLib.select(page, args.children)
+    if (childUrlsResult.urlsFromFeed === true) {
+      report.setHasFeed()
+    }
+  } catch (e) {
+    console.error(`Crash with ${landingPageUrl}`)
+    console.error(e)
+    await browser.close()
+    return
   }
   await browser.close()
 
@@ -56,11 +68,16 @@ const crawl = async args => {
       }
 
       const browser = await braveBrowserLib.launch(args)
-      const page = await browser.newPage()
-      await loadFor(page, childUrl, args.secs)
-      const devTools = await page.target().createCDPSession()
-      const graphMl = await devTools.send('Page.generatePageGraph')
-      await report.addPageGraphResult(childUrl, graphMl, aCondition)
+      try {
+        const page = await browser.newPage()
+        await loadFor(page, childUrl, args.secs)
+        const devTools = await page.target().createCDPSession()
+        const graphMl = await devTools.send('Page.generatePageGraph')
+        await report.addPageGraphResult(childUrl, graphMl.data, aCondition)
+      } catch (e) {
+        console.error(`Crash with ${childUrl}`)
+        console.error(e)
+      }
       await browser.close()
     }
   }

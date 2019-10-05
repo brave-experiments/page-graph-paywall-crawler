@@ -41,11 +41,14 @@ const _addPageGraphResult = async (crawlData, resultsDir, pageUrl, pageGraphXML,
 
   const reportDir = pathLib.join(resultsDir, 'pages', urlIndex.toString())
   const reportPath = pathLib.join(reportDir, condition + '.graphml')
-  if (await fileExists(reportPath)) {
-    throw new Error(`${reportPath} has already been recorded`)
-  }
+  try {
+    if (await fileExists(reportPath)) {
+      throw new Error(`${reportPath} has already been recorded`)
+    }
+  } catch (_) {}
 
   await fsExtraLib.mkdirp(reportDir)
+  console.log(`Writing ${reportPath}`)
   await writeFile(reportPath, pageGraphXML, 'utf8')
 }
 

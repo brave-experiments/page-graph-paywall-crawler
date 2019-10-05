@@ -106,7 +106,8 @@ const select = async (page, count = 10) => {
   const linksAsArray = Array.from(collectedLinks)
 
   if (linksAsArray.length <= count) {
-    return linksAsArray
+    selectResult.urls = linksAsArray
+    return selectResult
   }
 
   const random = new randomJsLib.Random()
