@@ -14,10 +14,12 @@ const writeFile = utilLib.promisify(fsExtraLib.writeFile)
 const validResultConditions = ['clean', 'dirty']
 
 const _deleteDirIfExists = async dirPath => {
-  const statRs = await stat(dirPath)
-  if (statRs.isDirectory()) {
-    await rmDir(dirPath)
-  }
+  try {
+    const statRs = await stat(dirPath)
+    if (statRs.isDirectory()) {
+      await rmDir(dirPath)
+    }
+  } catch (_) {}
 }
 
 const _installCleanProfile = async fullProfilePath => {
