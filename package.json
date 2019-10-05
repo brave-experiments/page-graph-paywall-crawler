@@ -1,0 +1,24 @@
+{
+  "name": "brave-page-graph-paywall-crawler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "argparse": "^1.0.10",
+    "aws-sdk": "^2.542.0",
+    "fs-extra": "^8.1.0",
+    "puppeteer-core": "^1.20.0",
+    "random-js": "^2.1.0",
+    "rss-parser": "^3.7.2",
+    "tldjs": "^2.3.1"
+  },
+  "devDependencies": {
+    "standard": "^14.3.1"
+  },
+  "scripts": {
+    "lint": "./node_modules/standard/bin/cmd.js",
+    "lint-fix": "./node_modules/standard/bin/cmd.js --fix"
+  },
+  "author": "",
+  "license": "ISC"
+}
