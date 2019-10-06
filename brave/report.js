@@ -48,7 +48,6 @@ const _addPageGraphResult = async (crawlData, resultsDir, pageUrl, pageGraphXML,
   } catch (_) {}
 
   await fsExtraLib.mkdirp(reportDir)
-  console.log(`Writing ${reportPath}`)
   await writeFile(reportPath, pageGraphXML, 'utf8')
 }
 

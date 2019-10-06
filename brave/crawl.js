@@ -6,6 +6,7 @@ const puppeteerLib = require('puppeteer-core')
 
 const braveBrowserLib = require('./browser')
 const braveChildUrlsLib = require('./child_urls')
+const braveDebugLib = require('./debug')
 const braveReportLib = require('./report')
 
 const loadFor = async (page, url, numSecs = 30) => {
@@ -32,10 +33,12 @@ const loadFor = async (page, url, numSecs = 30) => {
 }
 
 const crawl = async args => {
+  const landingPageUrl = `http://${args.domain}`
+
+  braveDebugLib.verbose(`Starting crawl of ${landingPageUrl}`)
   const report = braveReportLib.create(args)
   await report.installCleanProfile()
 
-  const landingPageUrl = `https://${args.domain}`
   let childUrlsResult
   const browser = await braveBrowserLib.launch(args)
   try {
@@ -47,8 +50,8 @@ const crawl = async args => {
       report.setHasFeed()
     }
   } catch (e) {
-    console.error(`Crash with ${landingPageUrl}`)
-    console.error(e)
+    braveDebugLib.log(`Crash with ${landingPageUrl}`)
+    braveDebugLib.log(e)
     await browser.close()
     return
   }
@@ -68,6 +71,7 @@ const crawl = async args => {
       }
 
       const browser = await braveBrowserLib.launch(args)
+      braveDebugLib.verbose(`Starting ${aCondition} crawl of ${childUrl}`)
       try {
         const page = await browser.newPage()
         await loadFor(page, childUrl, args.secs)

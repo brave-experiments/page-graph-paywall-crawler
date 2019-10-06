@@ -58,6 +58,7 @@ const _urlsFromFeed = async (page) => {
     braveDebugLib.verbose('Was not able to find a feed for this site.')
     return false
   }
+  braveDebugLib.verbose('Found a feed element for this site')
 
   const pageUrl = page.url()
   const relativeFeedUrl = (await (await feedLink.getProperty('href')).jsonValue())

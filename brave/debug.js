@@ -13,14 +13,14 @@ const log = (msg, override = false) => {
   if (_isDebugMode === false && override === false) {
     return
   }
-  console.log(msg)
+  console.log(`${(new Date()).toISOString()}: ${msg}`)
 }
 
 const verbose = (msg, override = false) => {
   if (_isVerboseMode === false && override === false) {
     return
   }
-  console.log(msg)
+  console.log(`${(new Date()).toISOString()}: ${msg}`)
 }
 
 module.exports = {

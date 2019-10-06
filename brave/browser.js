@@ -39,6 +39,7 @@ const launch = async args => {
       '--disable-brave-update',
       '--enable-logging=stderr'
     ],
+    ignoreHTTPSErrors: true,
     headless: true,
     executablePath: args.browser,
     userDataDir
